@@ -301,7 +301,11 @@ export const App: React.FC = () => {
         {!session ? (
           /* Amount Entry / Keypad Workspace */
           <div className="keypad-workspace">
-            <AmountDisplay amountStr={amountStr} profile={profile} />
+            <AmountDisplay
+              amountStr={amountStr}
+              profile={profile}
+              onClear={() => setAmountStr('')}
+            />
 
             <div className="note-input-row">
               <input

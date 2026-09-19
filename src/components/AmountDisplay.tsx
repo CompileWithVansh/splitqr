@@ -5,9 +5,10 @@ import type { UpiProfile } from '../types';
 interface Props {
   amountStr: string;
   profile: UpiProfile;
+  onClear?: () => void;
 }
 
-export const AmountDisplay: React.FC<Props> = ({ amountStr, profile }) => {
+export const AmountDisplay: React.FC<Props> = ({ amountStr, profile, onClear }) => {
   const numAmount = parseFloat(amountStr) || 0;
   const hasValue = numAmount > 0;
 
@@ -27,7 +28,27 @@ export const AmountDisplay: React.FC<Props> = ({ amountStr, profile }) => {
 
   return (
     <div className="amount-display-card">
-      <div className="amount-label">Billing Amount</div>
+      <div className="amount-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+        <span>Billing Amount</span>
+        {hasValue && onClear && (
+          <button
+            type="button"
+            onClick={onClear}
+            style={{
+              background: 'rgba(255, 255, 255, 0.08)',
+              border: 'none',
+              color: '#94a3b8',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              padding: '2px 8px',
+              borderRadius: '9999px',
+              cursor: 'pointer',
+            }}
+          >
+            ✕ Clear
+          </button>
+        )}
+      </div>
       <div className="amount-value-row">
         <span className="rupee-symbol">₹</span>
         <span className={`amount-text ${!hasValue ? 'empty' : ''}`}>

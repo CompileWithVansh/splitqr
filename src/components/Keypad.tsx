@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { playKeypadClick, triggerHaptic } from '../utils/sound';
 
 interface Props {
@@ -14,6 +14,8 @@ export const Keypad: React.FC<Props> = ({
   soundEnabled,
   hapticsEnabled,
 }) => {
+  const clearTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   const triggerFeedback = () => {
     if (soundEnabled) playKeypadClick();
     if (hapticsEnabled) triggerHaptic();
@@ -32,18 +34,6 @@ export const Keypad: React.FC<Props> = ({
       return;
     }
 
-    if (char === '00') {
-      if (!amountStr || amountStr === '0') return;
-      if (amountStr.includes('.')) {
-        const parts = amountStr.split('.');
-        if (parts[1]?.length >= 2) return;
-      }
-      // Cap maximum length
-      if (amountStr.length >= 8) return;
-      onAmountChange(amountStr + '00');
-      return;
-    }
-
     if (amountStr === '0') {
       onAmountChange(char);
       return;
@@ -55,6 +45,7 @@ export const Keypad: React.FC<Props> = ({
       if (decimals && decimals.length >= 2) return;
     }
 
+    // Cap maximum length
     if (amountStr.length >= 8) return;
     onAmountChange(amountStr + char);
   };
@@ -69,6 +60,19 @@ export const Keypad: React.FC<Props> = ({
   const handleClear = () => {
     triggerFeedback();
     onAmountChange('');
+  };
+
+  const handleTouchStartBackspace = () => {
+    clearTimerRef.current = setTimeout(() => {
+      handleClear();
+    }, 500);
+  };
+
+  const handleTouchEndBackspace = () => {
+    if (clearTimerRef.current) {
+      clearTimeout(clearTimerRef.current);
+      clearTimerRef.current = null;
+    }
   };
 
   const handleAddPreset = (delta: number) => {
@@ -99,7 +103,7 @@ export const Keypad: React.FC<Props> = ({
         </button>
       </div>
 
-      {/* Main Touchpad Grid */}
+      {/* Universal 4x3 Touch Keypad Grid */}
       <div className="touch-keypad">
         <button type="button" className="keypad-btn" onClick={() => handleDigit('1')}>1</button>
         <button type="button" className="keypad-btn" onClick={() => handleDigit('2')}>2</button>
@@ -113,27 +117,27 @@ export const Keypad: React.FC<Props> = ({
         <button type="button" className="keypad-btn" onClick={() => handleDigit('8')}>8</button>
         <button type="button" className="keypad-btn" onClick={() => handleDigit('9')}>9</button>
 
-        <button type="button" className="keypad-btn action-btn" onClick={handleClear} title="Clear All">
-          C
+        {/* Universal Bottom Row: [ . ] [ 0 ] [ ⌫ ] */}
+        <button
+          type="button"
+          className="keypad-btn"
+          onClick={() => handleDigit('.')}
+          title="Decimal dot"
+        >
+          .
         </button>
         <button type="button" className="keypad-btn" onClick={() => handleDigit('0')}>0</button>
-        <button type="button" className="keypad-btn action-btn" onClick={handleBackspace} title="Backspace">
-          ⌫
-        </button>
-
-        <button type="button" className="keypad-btn" onClick={() => handleDigit('00')}>00</button>
-        <button type="button" className="keypad-btn" onClick={() => handleDigit('.')}>.</button>
         <button
           type="button"
           className="keypad-btn action-btn"
-          onClick={() => {
-            triggerFeedback();
-            onAmountChange('1999');
-          }}
-          title="Instant 1999 cap preset"
-          style={{ fontSize: '0.86rem', fontWeight: 700, color: '#34d399' }}
+          onClick={handleBackspace}
+          onTouchStart={handleTouchStartBackspace}
+          onTouchEnd={handleTouchEndBackspace}
+          onMouseDown={handleTouchStartBackspace}
+          onMouseUp={handleTouchEndBackspace}
+          title="Backspace (Hold to clear all)"
         >
-          1999
+          ⌫
         </button>
       </div>
     </div>
