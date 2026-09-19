@@ -9,6 +9,8 @@ import {
   loadProfileHistory,
   recordProfileTransaction,
   saveProfileHistory,
+  wipeAllStoredData,
+  DEMO_PROFILE,
 } from './utils/storage';
 import { createSplitSessionChunks } from './utils/splitEngine';
 import { playPaidChime, playAllPaidSuccessChime } from './utils/sound';
@@ -227,6 +229,18 @@ export const App: React.FC = () => {
     saveProfileHistory(profile.id, []);
   };
 
+  const handleLogoutAndClear = () => {
+    wipeAllStoredData();
+    setProfile(DEMO_PROFILE);
+    setSession(null);
+    setAmountStr('');
+    setNote('');
+    setShowSettings(false);
+    setShowSwitcher(false);
+    setShowHistory(false);
+    setShowOnboarding(true);
+  };
+
   return (
     <>
       {/* First-time Onboarding Modal */}
@@ -377,6 +391,7 @@ export const App: React.FC = () => {
         <ProfileSwitcherModal
           activeProfile={profile}
           onSelectProfile={handleSelectProfile}
+          onLogoutAndClear={handleLogoutAndClear}
           onClose={() => setShowSwitcher(false)}
         />
       )}
@@ -386,6 +401,7 @@ export const App: React.FC = () => {
         <SettingsModal
           profile={profile}
           onSave={handleSaveProfile}
+          onLogoutAndClear={handleLogoutAndClear}
           onClose={() => setShowSettings(false)}
         />
       )}

@@ -11,12 +11,14 @@ import {
 interface Props {
   activeProfile: UpiProfile;
   onSelectProfile: (profile: UpiProfile) => void;
+  onLogoutAndClear?: () => void;
   onClose: () => void;
 }
 
 export const ProfileSwitcherModal: React.FC<Props> = ({
   activeProfile,
   onSelectProfile,
+  onLogoutAndClear,
   onClose,
 }) => {
   const [profiles, setProfiles] = useState<UpiProfile[]>(() => loadAllProfiles());
@@ -207,6 +209,23 @@ export const ProfileSwitcherModal: React.FC<Props> = ({
                     onChange={handleImportBackup}
                   />
                 </label>
+              </div>
+
+              {/* Wipe on Shared Computer */}
+              <div style={{ marginTop: '12px', borderTop: '1px solid var(--border-subtle)', paddingTop: '12px' }}>
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  style={{ width: '100%', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.3)', fontSize: '0.82rem', padding: '10px' }}
+                  onClick={() => {
+                    if (confirm('Log out and erase all stores, UPI IDs, and billing history from this browser? No one else using this computer will be able to see your details.')) {
+                      onLogoutAndClear?.();
+                      onClose();
+                    }
+                  }}
+                >
+                  🔒 Log Out & Erase All Stores from this Device
+                </button>
               </div>
             </>
           ) : (

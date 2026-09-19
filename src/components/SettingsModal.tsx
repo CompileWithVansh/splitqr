@@ -4,10 +4,11 @@ import type { UpiProfile } from '../types';
 interface Props {
   profile: UpiProfile;
   onSave: (updated: UpiProfile) => void;
+  onLogoutAndClear?: () => void;
   onClose: () => void;
 }
 
-export const SettingsModal: React.FC<Props> = ({ profile, onSave, onClose }) => {
+export const SettingsModal: React.FC<Props> = ({ profile, onSave, onLogoutAndClear, onClose }) => {
   const [storeName, setStoreName] = useState(profile.storeName);
   const [payeeName, setPayeeName] = useState(profile.payeeName);
   const [primaryUpiId, setPrimaryUpiId] = useState(profile.primaryUpiId);
@@ -162,16 +163,35 @@ export const SettingsModal: React.FC<Props> = ({ profile, onSave, onClose }) => 
               </label>
             </div>
 
-            <div className="form-group">
-              <label className="form-label">Security PIN (Optional Cashier Lock)</label>
-              <input
-                type="password"
-                maxLength={4}
-                className="form-input"
-                value={pin}
-                onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
-                placeholder="4-digit PIN (leave blank for no lock)"
-              />
+              <div className="form-group">
+                <label className="form-label">Security PIN (Optional Cashier Lock)</label>
+                <input
+                  type="password"
+                  maxLength={4}
+                  className="form-input"
+                  value={pin}
+                  onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
+                  placeholder="4-digit PIN (leave blank for no lock)"
+                />
+              </div>
+
+              <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
+                Shared / Public Computer Privacy:
+              </div>
+              <button
+                type="button"
+                className="btn-secondary"
+                style={{ color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.3)', width: '100%', padding: '10px', fontSize: '0.85rem' }}
+                onClick={() => {
+                  if (confirm('Log out and erase all store details, UPI IDs, and transaction history from this browser? No other user will be able to see your details.')) {
+                    onLogoutAndClear?.();
+                    onClose();
+                  }
+                }}
+              >
+                🔒 Log Out & Erase All Data from this Device
+              </button>
             </div>
           </div>
 

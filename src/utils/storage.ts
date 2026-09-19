@@ -148,3 +148,18 @@ export function importAllData(jsonStr: string): boolean {
     return false;
   }
 }
+
+export function wipeAllStoredData(): void {
+  try {
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('splitqr_')) {
+        keysToRemove.push(key);
+      }
+    }
+    keysToRemove.forEach((k) => localStorage.removeItem(k));
+  } catch (err) {
+    console.error('Failed to wipe stored data:', err);
+  }
+}
