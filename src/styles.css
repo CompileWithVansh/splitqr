@@ -424,85 +424,194 @@ body {
   flex: 1;
 }
 
-/* Header strip above QRs */
-.settlement-top-bar {
+/* Modern Mobile-First Settlement Header Deck */
+.settlement-header-deck {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 12px;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: 12px 18px;
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+  width: 100%;
 }
 
-.settlement-summary {
+.settlement-primary-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
 }
 
-.back-to-pad-btn {
-  background: rgba(255, 255, 255, 0.06);
+.btn-back-nav {
+  background: rgba(255, 255, 255, 0.07);
   border: 1px solid var(--border-subtle);
   color: var(--text-primary);
-  padding: 8px 14px;
-  border-radius: var(--radius-sm);
-  font-size: 0.88rem;
+  height: 42px;
+  padding: 0 16px;
+  border-radius: var(--radius-full);
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: all 0.15s ease;
+  transition: all 0.16s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.back-to-pad-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
+.btn-back-nav:hover {
+  background: rgba(255, 255, 255, 0.13);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
-.total-pill-group {
+.btn-back-nav .back-arrow {
+  font-size: 1.1rem;
+}
+
+.bill-total-badge {
   display: flex;
   flex-direction: column;
-}
-
-.total-pill-title {
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.total-pill-amount {
-  font-size: 1.25rem;
-  font-weight: 700;
-  font-family: var(--font-mono);
-  color: var(--text-primary);
-}
-
-/* Toggle Switches Strip */
-.settlement-toggles {
-  display: flex;
   align-items: center;
-  gap: 14px;
+  text-align: center;
+  flex-grow: 1;
 }
 
-.toggle-label {
+.bill-total-badge .bill-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.bill-total-badge .bill-value {
+  font-size: 1.35rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.btn-reroll {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: var(--emerald-400);
+  height: 42px;
+  padding: 0 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.82rem;
-  color: var(--text-secondary);
-  cursor: pointer;
-  font-weight: 500;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.toggle-label input[type="checkbox"] {
-  accent-color: var(--emerald-500);
+.btn-reroll:hover {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: var(--emerald-400);
+  transform: translateY(-1px);
+}
+
+.btn-reroll:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Control strip: Segmented view buttons & hide paid pill */
+.settlement-controls-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  width: 100%;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.segmented-control {
+  display: flex;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 3px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.segment-btn {
+  flex: 1;
+  height: 38px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: var(--radius-full);
   cursor: pointer;
-  width: 16px;
-  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.18s ease;
+  padding: 0 10px;
+}
+
+.segment-btn.active {
+  background: var(--emerald-500);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.35);
+  font-weight: 700;
+}
+
+.segment-btn:not(.active):hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.toggle-pill-btn {
+  height: 38px;
+  padding: 0 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.16s ease;
+  white-space: nowrap;
+}
+
+.toggle-pill-btn.active {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: var(--emerald-400);
+  color: var(--emerald-300);
+}
+
+.toggle-pill-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.pill-counter {
+  font-size: 0.72rem;
+  background: var(--emerald-500);
+  color: #ffffff;
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+  font-weight: 700;
 }
 
 /* Progress Bar */
@@ -556,6 +665,63 @@ body {
   align-items: center;
   gap: 14px;
   width: 100%;
+}
+
+/* Top Quick Navigation Bar in Carousel */
+.carousel-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 360px;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+}
+
+.carousel-nav-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  touch-action: manipulation;
+}
+
+.carousel-nav-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+}
+
+.carousel-nav-btn:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+.carousel-top-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.carousel-part-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--cyan-400);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.carousel-dots-mini {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .carousel-viewport {
@@ -830,19 +996,21 @@ body {
 }
 
 .sub-action-btn {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  padding: 6px 10px;
+  padding: 8px 12px;
+  min-height: 40px;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all 0.14s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 6px;
+  touch-action: manipulation;
 }
 
 .sub-action-btn:hover {
@@ -1031,6 +1199,373 @@ body {
   background: var(--emerald-400);
 }
 
+/* ---------------- Enhanced Settings Modal Styles ---------------- */
+.settings-modal-card {
+  max-width: 580px;
+  max-height: 88vh;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.settings-header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.settings-icon-badge {
+  font-size: 1.5rem;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.settings-subtitle {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Segmented Tab Navigation */
+.settings-tabs-nav {
+  display: flex;
+  background: rgba(15, 23, 42, 0.9);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 8px 16px;
+  gap: 8px;
+}
+
+.settings-tab-btn {
+  flex: 1;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.16s ease;
+  white-space: nowrap;
+}
+
+.settings-tab-btn.active {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: var(--emerald-300);
+  font-weight: 700;
+}
+
+.settings-tab-btn:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+}
+
+.settings-modal-body {
+  padding: 18px 20px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.label-with-badge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.badge-highlight {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--cyan-400);
+  background: rgba(6, 182, 212, 0.12);
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.font-mono-bold {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+/* Quick Threshold Chips */
+.quick-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.chip-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.chip-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.chip-btn.active {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: var(--emerald-400);
+  color: var(--emerald-300);
+  font-weight: 700;
+}
+
+/* Strategy Cards */
+.strategy-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.strategy-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.strategy-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.strategy-card.active {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: var(--emerald-400);
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.15);
+}
+
+.strategy-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.strategy-radio {
+  padding-top: 2px;
+}
+
+.radio-circle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.radio-circle.checked {
+  border-color: var(--emerald-400);
+  background: var(--emerald-500);
+  box-shadow: inset 0 0 0 3px var(--bg-card);
+}
+
+.strategy-title-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.strategy-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.pill-recommended {
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: linear-gradient(90deg, #10b981, #06b6d4);
+  color: #ffffff;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+}
+
+.strategy-example {
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+  color: var(--emerald-400);
+}
+
+.strategy-desc {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+  margin-left: 28px;
+}
+
+/* UPI Badges */
+.upi-badges-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.upi-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--emerald-400);
+  background: rgba(16, 185, 129, 0.1);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+/* Toggle Row Card & iOS Switch */
+.toggle-row-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+}
+
+.toggle-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.toggle-desc {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.switch-toggle {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 25px;
+  flex-shrink: 0;
+}
+
+.switch-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.14);
+  transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 19px;
+  width: 19px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.switch-toggle input:checked + .slider {
+  background-color: var(--emerald-500);
+}
+
+.switch-toggle input:checked + .slider:before {
+  transform: translateX(21px);
+}
+
+/* Danger Zone Card */
+.danger-zone-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: rgba(239, 68, 68, 0.05);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin-top: 10px;
+}
+
+.danger-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #f87171;
+}
+
+.danger-desc {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+.btn-danger-outline {
+  background: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #f87171;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  width: 100%;
+}
+
+.btn-danger-outline:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: #ef4444;
+}
+
 /* History List Item */
 .history-item {
   background: rgba(255, 255, 255, 0.03);
@@ -1080,5 +1615,65 @@ body {
   .keypad-btn {
     height: 68px;
     font-size: 1.8rem;
+  }
+}
+
+/* Mobile optimizations (< 640px) */
+@media (max-width: 640px) {
+  .settlement-header-deck {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .settlement-primary-row {
+    gap: 8px;
+  }
+
+  .btn-back-nav {
+    height: 38px;
+    padding: 0 12px;
+    font-size: 0.84rem;
+  }
+
+  .bill-total-badge .bill-value {
+    font-size: 1.18rem;
+  }
+
+  .btn-reroll {
+    height: 38px;
+    padding: 0 10px;
+    font-size: 0.8rem;
+  }
+
+  .settlement-controls-strip {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .segmented-control {
+    width: 100%;
+  }
+
+  .toggle-pill-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .qr-card {
+    padding: 16px;
+    max-width: 100%;
+  }
+
+  .qr-image {
+    width: 175px;
+    height: 175px;
+  }
+
+  .qr-amount {
+    font-size: 1.9rem;
+  }
+
+  .carousel-viewport {
+    max-width: 100%;
   }
 }

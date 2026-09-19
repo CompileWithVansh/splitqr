@@ -11,7 +11,7 @@ export const DEMO_PROFILE: UpiProfile = {
   primaryUpiId: 'merchant@upi',
   secondaryUpiId: '',
   splitThreshold: 1999,
-  splitStrategy: 'max',
+  splitStrategy: 'random',
   multiAccountMode: false,
   soundEnabled: true,
   hapticsEnabled: true,
@@ -20,7 +20,7 @@ export const DEMO_PROFILE: UpiProfile = {
 };
 
 export function hasCompletedOnboarding(): boolean {
-  return localStorage.getItem(HAS_SEEN_ONBOARDING_KEY) === 'true';
+  return true; // Start directly on the terminal without blocking popups
 }
 
 export function setHasCompletedOnboarding(val: boolean = true): void {

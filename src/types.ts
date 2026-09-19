@@ -5,7 +5,7 @@ export interface UpiProfile {
   primaryUpiId: string;
   secondaryUpiId?: string;
   splitThreshold: number; // default 1999
-  splitStrategy: 'max' | 'balanced'; // 'max' chunks (1999s + remainder) vs 'balanced' equal portions
+  splitStrategy: 'max' | 'balanced' | 'random'; // 'max' (1999s + remainder), 'balanced' equal parts, or 'random' anti-tracing natural split
   multiAccountMode: boolean; // alternate chunks across primary and secondary UPI if enabled
   soundEnabled: boolean;
   hapticsEnabled: boolean;

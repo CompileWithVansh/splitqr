@@ -4,7 +4,6 @@ import { UpiProfile, QrChunk, SplitSession, TransactionRecord } from './types';
 import {
   getActiveProfile,
   saveOrUpdateProfile,
-  hasCompletedOnboarding,
   setHasCompletedOnboarding,
   loadProfileHistory,
   recordProfileTransaction,
@@ -26,7 +25,7 @@ import { OnboardingModal } from './components/OnboardingModal';
 import { ProfileSwitcherModal } from './components/ProfileSwitcherModal';
 
 export const App: React.FC = () => {
-  const [showOnboarding, setShowOnboarding] = useState(() => !hasCompletedOnboarding());
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [profile, setProfile] = useState<UpiProfile>(() => getActiveProfile());
   const [amountStr, setAmountStr] = useState<string>('');
   const [note, setNote] = useState<string>('');
@@ -40,8 +39,13 @@ export const App: React.FC = () => {
   const [history, setHistory] = useState<TransactionRecord[]>(() => loadProfileHistory(profile.id));
   const [isUnlocked, setIsUnlocked] = useState(() => !profile.pin);
 
-  // Settlement View Toggles
-  const [focusMode, setFocusMode] = useState(false);
+  // Settlement View Toggles (auto-default to 1-by-1 Focus Mode on mobile screens)
+  const [focusMode, setFocusMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth < 768;
+    }
+    return false;
+  });
   const [hidePaid, setHidePaid] = useState(false);
 
   // Reload history whenever active profile changes
@@ -217,6 +221,37 @@ export const App: React.FC = () => {
     saveProfileHistory(profile.id, updatedHistory);
   };
 
+  // Re-roll / shuffle split amounts in real-time (especially for anti-tracing random splits)
+  const handleRerollSplit = async () => {
+    if (!session || session.isFullyPaid || generating) return;
+    setGenerating(true);
+    try {
+      const newChunks = await createSplitSessionChunks(session.totalAmount, profile);
+      setSession({
+        ...session,
+        chunks: newChunks,
+      });
+
+      const updatedHistory = history.map((item) => {
+        if (item.id === session.id) {
+          return {
+            ...item,
+            chunksSummary: newChunks.map((c) => ({
+              amount: c.amount,
+              upiId: c.upiId,
+              paid: false,
+            })),
+          };
+        }
+        return item;
+      });
+      setHistory(updatedHistory);
+      saveProfileHistory(profile.id, updatedHistory);
+    } finally {
+      setGenerating(false);
+    }
+  };
+
   // Reset for new customer
   const handleNewBill = () => {
     setSession(null);
@@ -336,39 +371,73 @@ export const App: React.FC = () => {
         ) : (
           /* Multi-QR Settlement Workspace */
           <div className="qr-settlement-view">
-            {/* Top Navigation & Controls */}
-            <div className="settlement-top-bar">
-              <div className="settlement-summary">
-                <button type="button" className="back-to-pad-btn" onClick={() => setSession(null)}>
-                  ← Keypad
+            {/* Mobile & Desktop Responsive Settlement Header Deck */}
+            <div className="settlement-header-deck">
+              <div className="settlement-primary-row">
+                <button
+                  type="button"
+                  className="btn-back-nav"
+                  onClick={() => setSession(null)}
+                  title="Return to keypad to enter a new amount"
+                >
+                  <span className="back-arrow">←</span>
+                  <span>Keypad</span>
                 </button>
-                <div className="total-pill-group">
-                  <span className="total-pill-title">Total Bill</span>
-                  <span className="total-pill-amount">
-                    ₹{session.totalAmount.toLocaleString('en-IN')}
-                  </span>
+
+                <div className="bill-total-badge">
+                  <span className="bill-label">TOTAL BILL</span>
+                  <span className="bill-value">₹{session.totalAmount.toLocaleString('en-IN')}</span>
                 </div>
+
+                {session.chunks.length > 1 && !session.isFullyPaid && (
+                  <button
+                    type="button"
+                    className="btn-reroll"
+                    onClick={handleRerollSplit}
+                    disabled={generating}
+                    title="Re-randomize / re-calculate split chunks"
+                  >
+                    <span>🎲</span>
+                    <span className="reroll-text">{generating ? 'Rolling...' : 'Re-roll'}</span>
+                  </button>
+                )}
               </div>
 
-              {/* Toggles */}
-              <div className="settlement-toggles">
-                <label className="toggle-label" title="Show one QR at a time on screen">
-                  <input
-                    type="checkbox"
-                    checked={focusMode}
-                    onChange={(e) => setFocusMode(e.target.checked)}
-                  />
-                  <span>Focus 1-by-1</span>
-                </label>
+              {/* Segmented Touch Control Strip for Mobile & Desktop */}
+              <div className="settlement-controls-strip">
+                <div className="segmented-control" role="group" aria-label="View Mode">
+                  <button
+                    type="button"
+                    className={`segment-btn ${focusMode ? 'active' : ''}`}
+                    onClick={() => setFocusMode(true)}
+                  >
+                    <span className="segment-icon">🎴</span>
+                    <span>1-by-1 Focus</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`segment-btn ${!focusMode ? 'active' : ''}`}
+                    onClick={() => setFocusMode(false)}
+                  >
+                    <span className="segment-icon">▦</span>
+                    <span>All QRs ({session.chunks.length})</span>
+                  </button>
+                </div>
 
-                <label className="toggle-label" title="Hide paid cards so customer doesn't get confused">
-                  <input
-                    type="checkbox"
-                    checked={hidePaid}
-                    onChange={(e) => setHidePaid(e.target.checked)}
-                  />
-                  <span>Hide Paid</span>
-                </label>
+                <button
+                  type="button"
+                  className={`toggle-pill-btn ${hidePaid ? 'active' : ''}`}
+                  onClick={() => setHidePaid((prev) => !prev)}
+                  title="Toggle hiding settled QR cards"
+                >
+                  <span>{hidePaid ? '🙈' : '👁️'}</span>
+                  <span>{hidePaid ? 'Hiding Paid' : 'Hide Paid'}</span>
+                  {hidePaid && (
+                    <span className="pill-counter">
+                      {session.chunks.filter((c) => c.status === 'unpaid').length} left
+                    </span>
+                  )}
+                </button>
               </div>
             </div>
 

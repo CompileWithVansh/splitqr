@@ -68,12 +68,55 @@ export const QrCarousel: React.FC<Props> = ({
     );
   }
 
-  // If focusMode is on or on smaller mobile viewports:
+  // If focusMode is on:
   return (
-    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      {/* If focusMode is enabled: show single focused card with controls */}
+    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '14px' }}>
       {focusMode ? (
         <div className="qr-carousel-mobile">
+          {/* Top Quick Navigation Bar for Mobile Thumb Ergonomics */}
+          {visibleChunks.length > 1 && (
+            <div className="carousel-top-bar">
+              <button
+                type="button"
+                className="carousel-nav-btn"
+                onClick={handlePrev}
+                disabled={safeIndex === 0}
+                aria-label="Previous QR Code"
+              >
+                ◀ Prev
+              </button>
+
+              <div className="carousel-top-info">
+                <span className="carousel-part-label">
+                  QR {safeIndex + 1} of {visibleChunks.length}
+                </span>
+                <div className="carousel-dots-mini">
+                  {visibleChunks.map((c, idx) => (
+                    <button
+                      key={c.id}
+                      type="button"
+                      className={`carousel-dot ${idx === safeIndex ? 'active' : ''} ${
+                        c.status === 'paid' ? 'paid' : ''
+                      }`}
+                      onClick={() => setActiveIndex(idx)}
+                      title={`Part ${c.partNumber}`}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className="carousel-nav-btn"
+                onClick={handleNext}
+                disabled={safeIndex === visibleChunks.length - 1}
+                aria-label="Next QR Code"
+              >
+                Next ▶
+              </button>
+            </div>
+          )}
+
           <div
             className="carousel-viewport"
             onTouchStart={onTouchStart}
@@ -90,7 +133,7 @@ export const QrCarousel: React.FC<Props> = ({
             </div>
           </div>
 
-          {/* Controls */}
+          {/* Bottom Controls for Easy Thumb Reach */}
           {visibleChunks.length > 1 && (
             <div className="carousel-controls">
               <button
@@ -105,8 +148,9 @@ export const QrCarousel: React.FC<Props> = ({
 
               <div className="carousel-dots">
                 {visibleChunks.map((c, idx) => (
-                  <div
+                  <button
                     key={c.id}
+                    type="button"
                     className={`carousel-dot ${idx === safeIndex ? 'active' : ''} ${
                       c.status === 'paid' ? 'paid' : ''
                     }`}

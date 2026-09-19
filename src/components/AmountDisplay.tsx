@@ -12,10 +12,12 @@ export const AmountDisplay: React.FC<Props> = ({ amountStr, profile, onClear }) 
   const numAmount = parseFloat(amountStr) || 0;
   const hasValue = numAmount > 0;
 
-  // Compute split preview
-  const chunks = hasValue
-    ? computeSplitAmounts(numAmount, profile.splitThreshold, profile.splitStrategy)
-    : [];
+  // Memoize preview chunks so random mode stays stable while typing note
+  const chunks = React.useMemo(() => {
+    return hasValue
+      ? computeSplitAmounts(numAmount, profile.splitThreshold, profile.splitStrategy)
+      : [];
+  }, [numAmount, profile.splitThreshold, profile.splitStrategy]);
   const isSplit = chunks.length > 1;
 
   // Format with Indian numbering system
@@ -60,7 +62,10 @@ export const AmountDisplay: React.FC<Props> = ({ amountStr, profile, onClear }) 
         <div className={`split-indicator-pill ${isSplit ? 'split' : 'normal'}`}>
           {isSplit ? (
             <>
-              <span>⚡ Split into <strong>{chunks.length} QR Codes</strong></span>
+              <span>
+                {profile.splitStrategy === 'random' ? '🎲 Anti-Trace' : '⚡'}{' '}
+                Split into <strong>{chunks.length} QR Codes</strong>
+              </span>
               <span>•</span>
               <span>
                 {chunks.map((c) => `₹${c.toLocaleString('en-IN')}`).join(' + ')}
